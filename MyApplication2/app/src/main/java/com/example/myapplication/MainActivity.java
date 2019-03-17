@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static int REQUEST_EXTERNAL_STRONGE = 1;
     private SDFileHelper a = new SDFileHelper();
     private Downloader downloader;
+    private String Dirpath;
 
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
@@ -99,13 +100,18 @@ public class MainActivity extends AppCompatActivity {
                 }.start();
                 String filepath = "";
                 try {
-                    filepath = Environment.getExternalStorageDirectory().getCanonicalPath() + "/EC/question/16.zip";
+                    Dirpath = Environment.getExternalStorageDirectory().getCanonicalPath() + "/EC/question";
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                filepath = Dirpath + "/16.zip";
                 DownLoadFile downLoadFile = new DownLoadFile(MainActivity.this, "http://10.0.2.2:8000/question/16", filepath);
                 downLoadFile.downLoad();
+                try {
+                    ZipUtils.UnZipFolder(filepath, Dirpath);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                /* new Thread(){
                     public void run(){
                         try{
