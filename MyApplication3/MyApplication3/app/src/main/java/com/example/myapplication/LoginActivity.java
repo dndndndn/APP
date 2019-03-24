@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.R;
 import com.example.utils.MD5Utils;
+import  com.example.utils.GetData;
 
 public class LoginActivity extends AppCompatActivity {
     //标题
@@ -26,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private String userName,psw,spPsw;
     //用户名和密码的输入框
     private EditText et_user_name,et_psw;
+    //与服务器交互的模块
+    private GetData getData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -47,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_login=findViewById(R.id.btn_login);
         et_user_name=findViewById(R.id.et_user_name);
         et_psw=findViewById(R.id.et_psw);
+        getData=new GetData();
         //返回键的点击事件
         tv_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +119,45 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "输入的用户名和密码不一致", Toast.LENGTH_SHORT).show();
                     return;
                 }else{
-                    Toast.makeText(LoginActivity.this, "此用户名不存在", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "此用户名不存在", Toast.LENGTH_SHORT).show();
+                    //发起服务器请求
+                    getData.setOnListener(new GetData.Listener() {
+                        @Override
+                        public void result(String result) {
+                            if(result.equals("password correct")){
+                                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                                //保存登录状态，在界面保存登录的用户名 定义个方法 saveLoginStatus boolean 状态 , userName 用户名;
+                                saveLoginStatus(true, userName);
+                                //登录成功后关闭此页面进入主页
+                                Intent data=new Intent();
+                                //datad.putExtra( ); name , value ;
+                                data.putExtra("isLogin",true);
+                                data.putExtra("userName",userName);
+                                //RESULT_OK为Activity系统常量，状态码为-1
+                                // 表示此页面下的内容操作成功将data返回到上一页面，如果是用back返回过去的则不存在用setResult传递data值
+                                setResult(RESULT_OK,data);
+                                //销毁登录界面
+                                LoginActivity.this.finish();
+                                //跳转到主界面，登录成功的状态传递到 MainActivity 中
+                                //startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                return;
+                            }
+                            else if(result.equals("password error"))
+                            {
+                                Toast.makeText(LoginActivity.this, "输入的用户名和密码不一致", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            else if(result.equals("user not exist"))
+                            {
+                                Toast.makeText(LoginActivity.this, "输入的用户名和密码不一致", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                        }
+
+                    });
+                    getData.login(LoginActivity.this,userName,psw);
                 }
             }
         });

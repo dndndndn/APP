@@ -23,6 +23,7 @@ public class GetData {
         return bt;
     }
 
+
     // 获取网页的html源代码
     public static String getHtml(String path) throws Exception {
         URL url = new URL(path);
