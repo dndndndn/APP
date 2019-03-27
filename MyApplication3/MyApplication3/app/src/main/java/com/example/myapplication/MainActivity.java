@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.R;
-/*任务在主界面的Hello World位置显示：用户名+“登录成功”*/
+/*任务在主界面的Hello World位置显示：用户名+“登录成功"*/
 public class MainActivity extends AppCompatActivity {
     private TextView et_user_name;
 
