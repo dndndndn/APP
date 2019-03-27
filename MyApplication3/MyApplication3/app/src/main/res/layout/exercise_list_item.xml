@@ -16,7 +16,6 @@
         android:layout_height="40dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
-        android:background="@drawable/exercises_bg_1"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"/>
