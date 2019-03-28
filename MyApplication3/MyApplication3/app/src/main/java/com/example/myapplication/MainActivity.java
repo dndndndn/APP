@@ -12,16 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.myapplication.R;
-import com.example.myapplication.ExercisesFragment;
-import com.example.myapplication.MyinfoFragment;
+import com.example.fragment.ExercisesFragment;
+import com.example.fragment.MyinfoFragment;
 
 /*任务在主界面的Hello World位置显示：用户名+“登录成功”*/
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     private RelativeLayout main_body;
-    private TextView bottom_bar_text_course;
-    private ImageView bottom_bar_image_course;
-    private RelativeLayout bottom_bar_course_btn;
     private TextView bottom_bar_text_exercises;
     private ImageView bottom_bar_image_exercises;
     private RelativeLayout bottom_bar_exercises_btn;
@@ -53,14 +49,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
             case 0:
                 bottom_bar_image_exercises.setImageResource(R.drawable.main_exercises_icon_selected);
                 bottom_bar_text_exercises.setTextColor(Color.parseColor("#0097F7"));
-                bottom_bar_text_course.setTextColor(Color.parseColor("#666666"));
                 bottom_bar_text_myinfo.setTextColor(Color.parseColor("#666666"));
                 bottom_bar_image_myinfo.setImageResource(R.drawable.main_my_icon);
                 break;
             case 1:
                 bottom_bar_image_myinfo.setImageResource(R.drawable.main_my_icon_selected);
                 bottom_bar_text_myinfo.setTextColor(Color.parseColor("#0097F7"));
-                bottom_bar_text_course.setTextColor(Color.parseColor("#666666"));
                 bottom_bar_text_exercises.setTextColor(Color.parseColor("#666666"));
                 bottom_bar_image_exercises.setImageResource(R.drawable.main_exercises_icon);
                 break;
@@ -79,7 +73,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         main_bottom_bar = findViewById(R.id.main_bottom_bar);
 
-        bottom_bar_course_btn.setOnClickListener(this);
         bottom_bar_exercises_btn.setOnClickListener(this);
         bottom_bar_myinfo_btn.setOnClickListener(this);
     }
