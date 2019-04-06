@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -122,8 +123,8 @@ public class LoginActivity extends AppCompatActivity {
                     //Toast.makeText(LoginActivity.this, "此用户名不存在", Toast.LENGTH_SHORT).show();
                     //发起服务器请求
                     getData.setOnListener(new GetData.Listener() {
-                        @Override
-                        public void result(String result) {
+                            @Override
+                            public void result(String result) {
                             if(result.equals("password correct")){
                                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                 //保存登录状态，在界面保存登录的用户名 定义个方法 saveLoginStatus boolean 状态 , userName 用户名;
@@ -155,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
 
                         }
-
+                        public void imageresult(Bitmap bitmap){}
                     });
                     getData.login(LoginActivity.this,userName,psw);
                 }

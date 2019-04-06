@@ -46,6 +46,14 @@ public class ExercisesFragment extends Fragment {
                     bean.title="第一章 电路模型和电路定律";
                     bean.content="共计5题";
                     bean.background=(R.drawable.exercises_bg_1);
+                    bean.id=1;
+                    bean.subjectId=16;
+                    bean.ChoiceLength=4;
+                    bean.Choice[0]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
+                    bean.Choice[1]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
+                    bean.Choice[2]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
+                    bean.Choice[3]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
+                    bean.answer=2;
                     break;
                 case 1:
                     bean.title="第二章 电阻电路的等效变换";

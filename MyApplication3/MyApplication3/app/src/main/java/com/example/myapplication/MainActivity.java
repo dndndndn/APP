@@ -81,11 +81,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bottom_bar_exercises_btn:
-                getSupportFragmentManager().beginTransaction().add(R.id.main_body,new ExercisesFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_body,new ExercisesFragment()).commit();
                 setSelectStatus(0);
                 break;
             case R.id.bottom_bar_myinfo_btn:
-                getSupportFragmentManager().beginTransaction().add(R.id.main_body,new MyinfoFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_body,new MyinfoFragment()).commit();
                 setSelectStatus(1);
                 break;
         }

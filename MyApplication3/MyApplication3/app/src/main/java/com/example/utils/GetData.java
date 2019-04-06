@@ -10,12 +10,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +23,7 @@ public class GetData {
     private Context context;
     private Listener mListener;
     private String Loginresult;
+    private Bitmap bitmap;
     public GetData(){
 
     }
@@ -36,24 +36,35 @@ public class GetData {
     //接口
     public interface Listener {
         void result(String result);
+        void imageresult(Bitmap bitmap);
     }
 
     //获取图片
-    public static byte[] getImage(String path) throws Exception {
-        URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        // 设置连接超时为5秒
-        conn.setConnectTimeout(5000);
-        // 设置请求类型为Get类型
-        conn.setRequestMethod("GET");
-        // 判断请求Url是否成功
-        if (conn.getResponseCode() != 200) {
-            throw new RuntimeException("请求url失败");
-        }
-        InputStream inStream = conn.getInputStream();
-        byte[] bt = StreamTool.read(inStream);
-        inStream.close();
-        return bt;
+    public void getImage(final String path){
+        new Thread() {
+            public void run() {
+                try {
+                    URL url = new URL(path);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    // 设置连接超时为5秒
+                    conn.setConnectTimeout(5000);
+                    // 设置请求类型为Get类型
+                    conn.setRequestMethod("GET");
+                    // 判断请求Url是否成功
+                    if (conn.getResponseCode() != 200) {
+                        handler.sendEmptyMessage(0x002);
+                    }
+                    InputStream inStream = conn.getInputStream();
+                    byte[] data = StreamTool.read(inStream);
+                    inStream.close();
+                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    handler.sendEmptyMessage(0x003);
+                } catch (
+                        Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
     //检查登陆信息
     public void login(final Context activity, final String name, final String password) {
@@ -148,6 +159,10 @@ public class GetData {
                 case 0x001:
                     mListener.result(Loginresult);
                     break;
+                case 0x002:
+                    break;
+                case 0x003:
+                    mListener.imageresult(bitmap);
                 default:
                     break;
             }

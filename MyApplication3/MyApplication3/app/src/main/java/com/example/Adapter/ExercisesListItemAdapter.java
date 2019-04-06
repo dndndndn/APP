@@ -2,6 +2,8 @@ package com.example.Adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import com.example.myapplication.ExercisesActivity;
 import com.example.myapplication.ExercisesBean;
+import com.example.myapplication.LoginActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.RegisterActivity;
+
 
 
 public class ExercisesListItemAdapter extends BaseAdapter {
@@ -67,18 +73,17 @@ public class ExercisesListItemAdapter extends BaseAdapter {
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {//convertview 缓存界面VIEW免得每次都加在xml
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.exercises_list_item, null);
             convertView.setTag(new ViewHolder(convertView));
         }
-        initializeViews((ExercisesBean) getItem(position), (ViewHolder) convertView.getTag(),
-                position, convertView);
+        initializeViews( position,(ViewHolder) convertView.getTag()
+                , convertView);
         return convertView;
     }
 
-    private void initializeViews(ExercisesBean object, ViewHolder holder,
-                                 int position, View convertView) {
+    private void initializeViews(int position, ViewHolder holder, View convertView) {
         final ExercisesBean bean = getItem(position);
         if (bean != null) {
             holder.tvOrder.setText(position + 1 + "");
@@ -87,10 +92,25 @@ public class ExercisesListItemAdapter extends BaseAdapter {
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (bean == null) {
+                    if (bean.ChoiceLength ==0) {
                         return;
                     }
                     //跳转到习题界面
+                    else
+                    {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("id",bean.id);
+                        bundle.putInt("subjectId",bean.subjectId);
+                        bundle.putInt("ChoiceLength",bean.ChoiceLength);
+                        for(int i=0;i<bean.ChoiceLength;i++)
+                        {
+                            bundle.putString("Choice"+i,bean.Choice[i]);
+                        }
+                        bundle.putInt("answer",bean.answer);
+                        Intent intent=new Intent(context, ExercisesActivity.class);
+                        intent.putExtras(bundle);
+                        context.startActivity(intent);
+                    }
                 }
             });
         }
