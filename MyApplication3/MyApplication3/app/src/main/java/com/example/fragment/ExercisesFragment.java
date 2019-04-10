@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.Adapter.ExercisesListItemAdapter;
-import com.example.myapplication.ExercisesBean;
+import com.example.Models.Groups;
 import com.example.myapplication.R;
 
 
@@ -19,7 +19,7 @@ public class ExercisesFragment extends Fragment {
 
     private ListView lvList;//来源fragment_exercises
     private ExercisesListItemAdapter adapter; //适配器
-    private List<ExercisesBean> ebl; //列表集合
+    private List<Groups> ebl; //列表集合
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,23 +37,15 @@ public class ExercisesFragment extends Fragment {
     }
 
     private void initData(){
-        ebl = new ArrayList<ExercisesBean>();
+        ebl = new ArrayList<Groups>();
         for (int i=0;i<10;i++){
-            ExercisesBean bean = new ExercisesBean();
+            Groups bean = new Groups();
             bean.id=(i+1);
             switch (i){
                 case 0:
                     bean.title="第一章 电路模型和电路定律";
                     bean.content="共计5题";
                     bean.background=(R.drawable.exercises_bg_1);
-                    bean.id=1;
-                    bean.subjectId=16;
-                    bean.ChoiceLength=4;
-                    bean.Choice[0]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
-                    bean.Choice[1]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
-                    bean.Choice[2]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
-                    bean.Choice[3]="http://10.0.2.2:8000/resources/question-12-Choice-1_1_2.jpg";
-                    bean.answer=2;
                     break;
                 case 1:
                     bean.title="第二章 电阻电路的等效变换";

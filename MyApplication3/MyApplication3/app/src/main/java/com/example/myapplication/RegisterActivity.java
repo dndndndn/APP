@@ -132,6 +132,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
     /**
      * 保存账号和密码到SharedPreferences中SharedPreferences
+     * todo：写成类
      */
     private void saveRegisterInfo(String userName,String psw){
         String md5Psw = MD5Utils.md5(psw);//把密码用MD5加密

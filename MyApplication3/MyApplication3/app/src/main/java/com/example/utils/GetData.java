@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,54 +22,22 @@ import org.json.JSONObject;
 public class GetData {
 
     private Context context;
-    private Listener mListener;
-    private String Loginresult;
-    private Bitmap bitmap;
+    private Handler handler;
+    public int ConnectFail=0;
+    public String LoginResult;
+    public Bitmap bitmap;
     public GetData(){
 
     }
-    public GetData(Context context){
+    public GetData(Context context,final Handler handler){
         this.context=context;
-    }
-    public void setOnListener(Listener mListener) {
-        this.mListener = mListener;
-    }
-    //接口
-    public interface Listener {
-        void result(String result);
-        void imageresult(Bitmap bitmap);
+        this.handler=handler;
     }
 
-    //获取图片
-    public void getImage(final String path){
-        new Thread() {
-            public void run() {
-                try {
-                    URL url = new URL(path);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    // 设置连接超时为5秒
-                    conn.setConnectTimeout(5000);
-                    // 设置请求类型为Get类型
-                    conn.setRequestMethod("GET");
-                    // 判断请求Url是否成功
-                    if (conn.getResponseCode() != 200) {
-                        handler.sendEmptyMessage(0x002);
-                    }
-                    InputStream inStream = conn.getInputStream();
-                    byte[] data = StreamTool.read(inStream);
-                    inStream.close();
-                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                    handler.sendEmptyMessage(0x003);
-                } catch (
-                        Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-    }
+
     //检查登陆信息
-    public void login(final Context activity, final String name, final String password) {
-        context=activity;
+    //activity,主线程的Handler,返回的message，和返回的结果，名字，密码
+    public void login(final int message ,final String name, final String password) {
         new Thread(){
             public void run(){
                 try {
@@ -109,7 +78,7 @@ public class GetData {
                     out.flush();
                     out.close();
                     if (conn.getResponseCode() != 200) {
-                        handler.sendEmptyMessage(0x002);
+                        handler.sendEmptyMessage(0x000);
                     }
                     else if (conn.getResponseCode() == 200) {
                         InputStream inStream = conn.getInputStream();
@@ -119,60 +88,57 @@ public class GetData {
                             inStream.close();
                             a = new String(inputdata);
                             JSONObject jar =new JSONObject(a);
-                            Loginresult=jar.getString("result");
-                            handler.sendEmptyMessage(0x001);
+                            LoginResult=jar.getString("result");
+                            handler.sendEmptyMessage(message);
                         } catch (Exception e1) {
                             // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
                     }
-                }catch (RuntimeException e){
-                    e.printStackTrace();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }catch (JSONException e){
+                }catch (Exception e){
                     e.printStackTrace();
                 }
 
             }
         }.start();
     }
+    //获取图片
+    public void getImage(final int message,final String path){
+        new Thread() {
+            public void run() {
+                try {
+                    URL url = new URL(path);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    // 设置连接超时为5秒
+                    conn.setConnectTimeout(5000);
+                    // 设置请求类型为Get类型
+                    conn.setRequestMethod("GET");
+                    // 判断请求Url是否成功
+                    if (conn.getResponseCode() != 200) {
+                        handler.sendEmptyMessage(0x000);
+                    }
+                    InputStream inStream = conn.getInputStream();
+                    byte[] data = StreamTool.read(inStream);
+                    inStream.close();
+                    bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    handler.sendEmptyMessage(message);
+                } catch (
+                        Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+    //获取题目
+    public void getQuestion(final String path){
 
-    // 获取网页的html源代码
-    public static String getHtml(String path) throws Exception {
-        URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setConnectTimeout(5000);
-        conn.setRequestMethod("GET");
-        if (conn.getResponseCode() == 200) {
-            InputStream in = conn.getInputStream();
-            byte[] data = StreamTool.read(in);
-            String html = new String(data, "UTF-8");
-            return html;
-        }
-        return null;
     }
 
-    private Handler handler=new Handler(){
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case 0x001:
-                    mListener.result(Loginresult);
-                    break;
-                case 0x002:
-                    break;
-                case 0x003:
-                    mListener.imageresult(bitmap);
-                default:
-                    break;
-            }
-        };
-    };
 }
 
-
+//工具类从流中读取数据
 class StreamTool {
-    //从流中读取数据
+
     public static byte[] read(InputStream inStream) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];

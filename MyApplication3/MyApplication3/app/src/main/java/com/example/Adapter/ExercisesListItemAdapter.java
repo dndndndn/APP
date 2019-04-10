@@ -4,6 +4,7 @@ package com.example.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +16,13 @@ import java.util.List;
 
 
 import com.example.myapplication.ExercisesActivity;
-import com.example.myapplication.ExercisesBean;
-import com.example.myapplication.LoginActivity;
+import com.example.Models.Groups;
 import com.example.myapplication.R;
-import com.example.myapplication.RegisterActivity;
-
 
 
 public class ExercisesListItemAdapter extends BaseAdapter {
 
-    private List<ExercisesBean> objects = new ArrayList<ExercisesBean>();
+    private List<Groups> objects = new ArrayList<Groups>();
     private Context context;
     private LayoutInflater layoutInflater;
 
@@ -35,12 +33,12 @@ public class ExercisesListItemAdapter extends BaseAdapter {
     /**
      * 设置数据更新界面
      */
-    public void setData(List<ExercisesBean> objects){
+    public void setData(List<Groups> objects){
         this.objects = objects;
         notifyDataSetChanged();
     }
     //
-    public void updateView(List<ExercisesBean> objects){
+    public void updateView(List<Groups> objects){
         this.objects = objects;
         this.notifyDataSetChanged();
     }
@@ -53,7 +51,7 @@ public class ExercisesListItemAdapter extends BaseAdapter {
      * 根据position得到对应的Item的对象
      */
     @Override
-    public ExercisesBean getItem(int position) {
+    public Groups getItem(int position) {
         return objects.get(position);
     }
 
@@ -71,7 +69,18 @@ public class ExercisesListItemAdapter extends BaseAdapter {
      * 第一次进入或滑动屏幕时候被调用
      */
 
-
+    private Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case 0x001:
+                    break;
+                case 0x002:
+                    break;
+                default:
+                    break;
+            }
+        };
+    };
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {//convertview 缓存界面VIEW免得每次都加在xml
         if (convertView == null) {
@@ -84,15 +93,18 @@ public class ExercisesListItemAdapter extends BaseAdapter {
     }
 
     private void initializeViews(int position, ViewHolder holder, View convertView) {
-        final ExercisesBean bean = getItem(position);
+        final Groups bean = getItem(position);
         if (bean != null) {
-            holder.tvOrder.setText(position + 1 + "");
+            holder.tvOrder.setText(position + 1 + "");//GET.DATA(FDDDF)
             holder.tvTitle.setText(bean.title);
             holder.tvOrder.setBackgroundResource(bean.background);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (bean.ChoiceLength ==0) {
+                    Intent intent=new Intent(context, ExercisesActivity.class);
+
+                    context.startActivity(intent);
+                   /* if (bean.ChoiceLength ==0) {
                         return;
                     }
                     //跳转到习题界面
@@ -107,10 +119,8 @@ public class ExercisesListItemAdapter extends BaseAdapter {
                             bundle.putString("Choice"+i,bean.Choice[i]);
                         }
                         bundle.putInt("answer",bean.answer);
-                        Intent intent=new Intent(context, ExercisesActivity.class);
                         intent.putExtras(bundle);
-                        context.startActivity(intent);
-                    }
+                    }*/
                 }
             });
         }
