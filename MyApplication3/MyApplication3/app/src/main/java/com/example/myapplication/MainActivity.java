@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.fragment.ExercisesFragment;
+import com.example.fragment.GroupListFragment;
 import com.example.fragment.MyinfoFragment;
 
 /*任务在主界面的Hello World位置显示：用户名+“登录成功”*/
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bottom_bar_exercises_btn:
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_body,new ExercisesFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_body,new GroupListFragment()).commit();
                 setSelectStatus(0);
                 break;
             case R.id.bottom_bar_myinfo_btn:

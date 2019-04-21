@@ -10,11 +10,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +30,7 @@ public class GetData {
     public int ConnectFail=0;
     public String LoginResult;
     public Bitmap bitmap;
+    public Object result;
     public GetData(){
 
     }
@@ -33,7 +38,17 @@ public class GetData {
         this.context=context;
         this.handler=handler;
     }
-
+    //从流中读取数据
+    public static byte[] read(InputStream inStream) throws Exception {
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        while ((len = inStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, len);
+        }
+        inStream.close();
+        return outStream.toByteArray();
+    }
 
     //检查登陆信息
     //activity,主线程的Handler,返回的message，和返回的结果，名字，密码
@@ -84,7 +99,7 @@ public class GetData {
                         InputStream inStream = conn.getInputStream();
                         String a = null;
                         try {
-                            byte[] inputdata = StreamTool.read(inStream);
+                            byte[] inputdata = read(inStream);
                             inStream.close();
                             a = new String(inputdata);
                             JSONObject jar =new JSONObject(a);
@@ -118,7 +133,7 @@ public class GetData {
                         handler.sendEmptyMessage(0x000);
                     }
                     InputStream inStream = conn.getInputStream();
-                    byte[] data = StreamTool.read(inStream);
+                    byte[] data = read(inStream);
                     inStream.close();
                     bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                     handler.sendEmptyMessage(message);
@@ -129,6 +144,63 @@ public class GetData {
             }
         }.start();
     }
+    //获取章节
+
+    public void getGroups(final int message){
+        new Thread(){
+            public void run(){
+                try {
+
+                    // 创建url资源
+                    String Url = context.getResources().getString(R.string.groups_url);
+                    StringBuilder params=new StringBuilder();
+                    params.append("groups");
+                    params.append("=");
+                    params.append("0000");//all
+                    //params.append("&");
+                    URL url = new URL(Url+(params.length()>0 ? "?"+params.toString() : ""));
+                    // 建立http连接
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    //GET请求
+                    conn.setRequestMethod("GET");
+                    // 设置连接超时为5秒
+                    conn.setConnectTimeout(5000);
+                    // 开始连接请求
+                    conn.connect();
+                    if (conn.getResponseCode() != 200) {
+                        handler.sendEmptyMessage(0x000);
+                    }
+                    else if (conn.getResponseCode() == 200) {
+                        InputStream inStream = conn.getInputStream();
+                        String a = null;
+                        try {
+                            byte[] inputdata = read(inStream);
+                            inStream.close();
+                            a = new String(inputdata);
+                            JSONObject jar =new JSONObject(a);
+                            Bundle bundle=new Bundle();
+                            Message msg=handler.obtainMessage();
+                            Iterator iter = jar.keys();
+                            while(iter.hasNext()){
+                                String key = (String)iter.next();
+                                String value = jar.getString(key);
+                                bundle.putString(key,value);
+                            }
+                            msg.what=message;
+                            msg.setData(bundle);
+                            handler.sendMessage(msg);
+                        } catch (Exception e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        }
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+    }
     //获取题目
     public void getQuestion(final String path){
 
@@ -136,17 +208,4 @@ public class GetData {
 
 }
 
-//工具类从流中读取数据
-class StreamTool {
 
-    public static byte[] read(InputStream inStream) throws Exception {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        while ((len = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, len);
-        }
-        inStream.close();
-        return outStream.toByteArray();
-    }
-}

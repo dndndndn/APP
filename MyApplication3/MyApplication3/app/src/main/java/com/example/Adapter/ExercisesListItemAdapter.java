@@ -4,7 +4,6 @@ package com.example.Adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,22 +68,10 @@ public class ExercisesListItemAdapter extends BaseAdapter {
      * 第一次进入或滑动屏幕时候被调用
      */
 
-    private Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case 0x001:
-                    break;
-                case 0x002:
-                    break;
-                default:
-                    break;
-            }
-        };
-    };
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {//convertview 缓存界面VIEW免得每次都加在xml
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.exercises_list_item, null);
+            convertView = layoutInflater.inflate(R.layout.group_list_item, null);
             convertView.setTag(new ViewHolder(convertView));
         }
         initializeViews( position,(ViewHolder) convertView.getTag()
@@ -97,30 +84,17 @@ public class ExercisesListItemAdapter extends BaseAdapter {
         if (bean != null) {
             holder.tvOrder.setText(position + 1 + "");//GET.DATA(FDDDF)
             holder.tvTitle.setText(bean.title);
+            holder.tvContent.setText("共计"+bean.count+"题");
             holder.tvOrder.setBackgroundResource(bean.background);
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //跳转到习题分类界面
                     Intent intent=new Intent(context, ExercisesActivity.class);
-
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("group",bean.id);
+                    intent.putExtras(bundle);
                     context.startActivity(intent);
-                   /* if (bean.ChoiceLength ==0) {
-                        return;
-                    }
-                    //跳转到习题界面
-                    else
-                    {
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("id",bean.id);
-                        bundle.putInt("subjectId",bean.subjectId);
-                        bundle.putInt("ChoiceLength",bean.ChoiceLength);
-                        for(int i=0;i<bean.ChoiceLength;i++)
-                        {
-                            bundle.putString("Choice"+i,bean.Choice[i]);
-                        }
-                        bundle.putInt("answer",bean.answer);
-                        intent.putExtras(bundle);
-                    }*/
                 }
             });
         }
